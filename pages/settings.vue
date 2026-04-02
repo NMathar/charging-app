@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen pb-32" style="background: var(--v-theme-surface)">
-    <AppHeader />
 
     <main class="pt-24 px-4 max-w-lg mx-auto">
       <header class="mb-8">
@@ -119,7 +118,6 @@
       </div>
     </main>
 
-    <BottomNav active-tab="profile" />
   </div>
 </template>
 

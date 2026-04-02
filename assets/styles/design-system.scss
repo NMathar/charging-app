@@ -158,9 +158,10 @@ $error: #ba1a1a;
   font-size: 28px;
   font-weight: 700;
   color: $on-surface;
-  outline: none;
   width: 100%;
+  outline: none;
   transition: all 0.3s ease;
+
 
   &:focus {
     ring: 2px solid rgba($primary-container, 0.2);
@@ -183,7 +184,7 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-.input-unit {
+ .input-unit {
   position: absolute;
   right: 20px;
   top: 50%;

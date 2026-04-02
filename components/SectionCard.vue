@@ -1,12 +1,17 @@
 <template>
-  <section class="card-secondary p-6">
-    <div class="flex items-center gap-3 mb-6">
+  <section class="card-secondary mb-6 pa-6">
+    <!-- TODO: set titel next to icon, not in header of section card -->
+
+    <v-row class="mb-2">
       <div :class="iconContainerClass">
         <v-icon :color="iconColor" size="24">{{ icon }}</v-icon>
-      </div>
-      <h3 class="title">{{ title }}</h3>
-    </div>
-    <slot />
+      </div>      
+      <span class="title mb-4 mt-2">{{ title }}</span>
+    </v-row>
+    
+
+
+    <slot /> 
   </section>
 </template>
 
