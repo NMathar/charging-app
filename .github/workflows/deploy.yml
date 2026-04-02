@@ -40,8 +40,10 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          passive: false
+          passive: true
           local-dir: dist/
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           dangerous-clean-slate: false
-          debug: true
+          protocol: ftp
+          port: 21
+          timeout: 60000
