@@ -6,84 +6,65 @@
       </header>
 
       <div v-if="activeSession" class="card-primary mb-6">
-        <div class="flex items-center gap-2 px-6 pt-5">
+        <div class="px-6 pt-5">
           <div class="badge-info">
             <span>Laufender Ladevorgang</span>
           </div>
-          <v-icon color="primary-container" size="18"
-            >mdi-lightning-bolt</v-icon
-          >
+          <div class="text-right">
+            <v-icon color="primary-container " size="18"
+              >mdi-lightning-bolt</v-icon
+            >
+          </div>
         </div>
 
-        <div class="p-6">
+        <div class="pa-6 text-center">
           <h3 class="headline-sm mb-6">Wallbox</h3>
 
-          <div class="flex items-center justify-center mb-6">
-            <div class="relative w-48 h-48">
-              <svg class="transform -rotate-90" width="192" height="192">
-                <circle
-                  cx="96"
-                  cy="96"
-                  r="80"
-                  stroke="rgb(var(--v-theme-surface-container-highest))"
-                  stroke-width="12"
-                  fill="none"
-                />
-                <circle
-                  cx="96"
-                  cy="96"
-                  r="80"
-                  stroke="url(#gradient)"
-                  stroke-width="12"
-                  fill="none"
-                  :stroke-dasharray="circumference"
-                  :stroke-dashoffset="
-                    circumference -
-                    (currentBatteryPercentage / 100) * circumference
-                  "
-                  stroke-linecap="round"
-                />
-                <defs>
-                  <linearGradient
-                    id="gradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="100%"
-                  >
-                    <stop
-                      offset="0%"
-                      stop-color="rgb(var(--v-theme-primary))"
-                    />
-                    <stop
-                      offset="100%"
-                      stop-color="rgb(var(--v-theme-primary-container))"
-                    />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <div
-                v-if="currentBatteryPercentage"
-                class="absolute inset-0 flex flex-col items-center justify-center"
+          <v-progress
+            :model-value="(currentBatteryPercentage / 100) * 100"
+            label="Laden..."
+            hide-label
+            details-position="bottom"
+          >
+            <template v-slot:default="{ percent }">
+              <v-progress-circular
+                :model-value="percent"
+                color="primary-container"
+                size="150"
+                width="15"
+                rounded
               >
-                <div class="headline-xl">{{ currentBatteryPercentage }}%</div>
-                <div class="label-sm text-on-surface-variant">SOC</div>
-              </div>
-            </div>
-          </div>
+                <div class="d-flex align-baseline mr-n3">
+                  <div class="text-headline-large text-medium-emphasis">
+                    {{ percent.toFixed() }}
+                  </div>
+                  <span class="ml-1">%</span>
+                </div>
+              </v-progress-circular>
+            </template>
 
-          <div class="grid grid-cols-2 gap-4 mb-6">
-            <div>
+            <template v-slot:value="{ percent }">
+              <div class="text-body-medium">
+                <v-scroll-y-transition mode="out-in">
+                  <div v-if="percent > 75" key="finalizing">Fertig...</div>
+                  <div v-else key="loading">Laden...</div>
+                </v-scroll-y-transition>
+              </div>
+            </template>
+          </v-progress>
+
+          <v-row class="mb-6">
+            <v-col class="text-center">
               <div class="label-sm text-on-surface-variant mb-2">Leistung</div>
               <div class="headline-md">
                 {{ activeSession.wallbox_power }} kW
               </div>
-            </div>
-            <div>
+            </v-col>
+            <v-col class="text-center">
               <div class="label-sm text-on-surface-variant mb-2">Dauer</div>
               <div class="headline-md">{{ activeDuration }}</div>
-            </div>
-          </div>
+            </v-col>
+          </v-row>
 
           <v-btn
             color="error"
@@ -116,7 +97,7 @@
               :max="100"
             />
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 ga3">
               <v-btn
                 color="primary-container"
                 block
@@ -148,13 +129,20 @@
 
       <div v-if="completedSessions.length > 0" class="mb-6">
         <div
-          class="gradient-primary rounded-4xl p-6 text-white mb-6 shadow-ambient"
+          class="gradient-primary rounded-4xl pa-6 text-white mb-6 shadow-ambient"
         >
           <div class="mb-2">
             <v-icon color="white" size="18">mdi-currency-eur</v-icon>
             <p class="body-sm opacity-90">Gesamtkosten</p>
           </div>
-          <p class="headline-xl">{{ totalCost.toFixed(2) }} €</p>
+          <p class="headline-xl">
+            {{
+              totalCost.toLocaleString("de-DE", {
+                style: "currency",
+                currency: "EUR",
+              })
+            }}
+          </p>
           <p class="body-sm opacity-75 mt-2">Aktueller Monat</p>
         </div>
 
@@ -173,8 +161,14 @@
           </v-btn>
         </div>
 
-        <div class="space-y-3">
-          <v-card v-for="session in displayedSessions" :key="session.id">
+        <div>
+          <v-card
+            variant="tonal"
+            class="mb-4"
+            :color="index % 2 === 0 ? 'secondary' : 'tertiary-container'"
+            v-for="(session, index) in displayedSessions"
+            :key="session.id"
+          >
             <v-card-text>
               <v-row class="mb-1">
                 <div class="icon-container-sm">
@@ -183,23 +177,30 @@
                   }}</v-icon>
                 </div>
                 <div>
-                  <p class="label-lg">{{ getStationName(session) }}</p>
-                  <p class="body-sm text-on-surface-variant">
-                    {{ formatShortDate(session.created_at) }} •
+                  <p class="text-lg-title-large text-sm-title-medium">
+                    {{ getStationName(session) }}
+                  </p>
+                  <p
+                    class="text-lg-body-large text-sm-body-medium text-on-surface-variant"
+                  >
+                    {{ formatShortDateWithTime(session.created_at) }} •
                     {{ session.energy_charged.toFixed(1) }} kWh
                   </p>
                 </div>
               </v-row>
               <div class="text-right">
                 <p
-                  class="label-lg"
+                  class="text-lg-headline-medium text-sm-headline-small"
                   style="color: var(--v-theme-primary-container)"
                 >
-                  {{ session.total_cost.toFixed(2) }} €
+                  {{
+                    session.total_cost.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })
+                  }}
                 </p>
-                <p class="body-sm" style="color: var(--v-theme-tertiary)">
-                  Erfolgreich
-                </p>
+                <p class="body-sm text-on-surface-variant">Erfolgreich</p>
               </div>
             </v-card-text>
           </v-card>
@@ -227,9 +228,25 @@
 </template>
 
 <script setup lang="ts">
+interface ChargingSession {
+  id: string;
+  start_percentage: number;
+  end_percentage: number;
+  start_time: string | null;
+  end_time: string | null;
+  battery_capacity: number;
+  electricity_price: number;
+  wallbox_power: number;
+  wallbox_loss: number;
+  energy_charged: number;
+  total_cost: number;
+  status: string;
+  created_at: string;
+}
+
 const supabase = useSupabaseClient();
 
-const sessions = ref([]);
+const sessions: Ref<ChargingSession[]> = ref([]);
 const loading = ref(true);
 const activeDuration = ref("0:00");
 const currentBatteryPercentage = ref(0);
@@ -424,9 +441,28 @@ const stopActiveCharging = async () => {
   stoppingCharge.value = false;
 };
 
-const formatShortDate = (dateString: string) => {
+const formatShortDateWithTime = (dateString: string) => {
+  // if date is older then one year show year, otherwise show day and month
+  const today = new Date();
+
   const date = new Date(dateString);
-  return date.toLocaleDateString("de-DE", { day: "2-digit", month: "short" });
+
+  if (date.getFullYear() !== today.getFullYear()) {
+    return date.toLocaleDateString("de-DE", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } else {
+    return date.toLocaleDateString("de-DE", {
+      day: "2-digit",
+      month: "short",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 };
 
 const getStationName = (session: any) => {
