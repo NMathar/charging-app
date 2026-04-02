@@ -36,7 +36,7 @@ jobs:
       
       - name: Test Ftplare
         run: |
-          curl -v -u ${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }} ftps://${{ secrets.FTP_SERVER }}/
+          curl -v -u ${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }} ftp://${{ secrets.FTP_SERVER }}/
         continue-on-error: true
 
       - name: Deploy to FTP
