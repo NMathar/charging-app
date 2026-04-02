@@ -183,8 +183,11 @@
                   <p
                     class="text-lg-body-large text-sm-body-medium text-on-surface-variant"
                   >
-                    {{ formatShortDateWithTime(session.created_at) }} •
+                    {{ formatShortDateWithTime(session.created_at) }} Uhr •
                     {{ session.energy_charged.toFixed(1) }} kWh
+                  </p>
+                  <p class="text-lg-body-large text-sm-body-medium text-on-surface-variant">
+                    {{ session.start_percentage }}% → {{ session.end_percentage }}%
                   </p>
                 </div>
               </v-row>
