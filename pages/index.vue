@@ -255,6 +255,7 @@ interface ChargingSession {
 }
 
 const supabase = useSupabaseClient();
+const { showSuccess, showError } = useNotification();
 
 const sessions: Ref<ChargingSession[]> = ref([]);
 const loading = ref(true);
@@ -376,6 +377,7 @@ const loadSessions = async () => {
 
   if (error) {
     console.error("Error loading sessions:", error);
+    showError("Fehler beim Laden der Ladevorgänge");
   } else {
     sessions.value = data || [];
   }
@@ -439,8 +441,11 @@ const saveManualSession = async (data: any) => {
     .from("charging_sessions")
     .insert([sessionData]);
 
-  if (!error) {
+  if (error) {
+    showError("Fehler beim Speichern des Ladevorgangs");
+  } else {
     await loadSessions();
+    showSuccess("Ladevorgang erfolgreich gespeichert");
   }
 
   savingQuick.value = false;
@@ -466,8 +471,11 @@ const startTimeBasedCharging = async (data: any) => {
     .from("charging_sessions")
     .insert([sessionData]);
 
-  if (!error) {
+  if (error) {
+    showError("Fehler beim Starten des Ladevorgangs");
+  } else {
     await loadSessions();
+    showSuccess("Ladevorgang gestartet");
   }
 
   startingQuick.value = false;
@@ -499,8 +507,11 @@ const stopActiveCharging = async () => {
     })
     .eq("id", activeSession.value.id);
 
-  if (!error) {
+  if (error) {
+    showError("Fehler beim Beenden des Ladevorgangs");
+  } else {
     await loadSessions();
+    showSuccess("Ladevorgang erfolgreich beendet");
   }
 
   stoppingCharge.value = false;

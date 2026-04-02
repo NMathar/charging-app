@@ -123,6 +123,7 @@
 
 <script setup lang="ts">
 const supabase = useSupabaseClient()
+const { showSuccess, showError } = useNotification()
 
 const loading = ref(true)
 const saving = ref(false)
@@ -162,6 +163,7 @@ const loadSettings = async () => {
 
   if (error) {
     console.error('Error loading settings:', error)
+    showError('Fehler beim Laden der Einstellungen')
   } else if (data) {
     settingsId.value = data.id
     form.battery_capacity = Number(data.battery_capacity)
@@ -200,9 +202,11 @@ const saveSettings = async () => {
 
   if (result.error) {
     errorMessage.value = 'Fehler beim Speichern der Einstellungen'
+    showError('Fehler beim Speichern der Einstellungen')
     console.error('Error saving settings:', result.error)
   } else {
     successMessage.value = 'Einstellungen erfolgreich gespeichert'
+    showSuccess('Einstellungen erfolgreich gespeichert')
     setTimeout(() => {
       successMessage.value = ''
     }, 3000)
