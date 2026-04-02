@@ -33,21 +33,6 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-      
-      - name: Install lftp
-        run: sudo apt-get update && sudo apt-get install -y lftp
-
-      - name: Test FTP connection (lftp)
-        run: |
-          # plain FTP
-          set -x 
-          lftp -d -e "quit" -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" "${{ secrets.FTP_SERVER }}" || true
-
-          # FTPS (explicit TLS) – falls dein Server das verlangt
-          lftp -e "set ftp:ssl-force true; set ftp:ssl-protect-data true; quit" \
-            -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" "ftps://${{ secrets.FTP_SERVER }}" || true
-        shell: bash
-        continue-on-error: true   # nicht aborten, nur zum Loggen
 
       - name: Deploy to FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -60,4 +45,3 @@ jobs:
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           dangerous-clean-slate: false
           debug: true
-          timeout: 120
