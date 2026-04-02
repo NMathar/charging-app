@@ -88,44 +88,44 @@
           variant="primary"
         >
           <div class="space-y-6">
-            <SoftWellInput
-              v-model="quickStart.start_percentage"
-              label="Start (%)"
-              unit="%"
-              type="number"
-              :min="0"
-              :max="100"
-            />
-
             <div class="grid grid-cols-2 ga3">
               <v-btn
                 color="primary-container"
                 block
                 class="my-4"
                 size="large"
-                @click="saveQuickSession"
+                @click="openManualDialog"
                 :loading="savingQuick"
                 height="52"
               >
                 <v-icon start size="18">mdi-content-save</v-icon>
-                Speichern
+                Manuell speichern
               </v-btn>
               <v-btn
                 color="primary"
                 block
                 class="my-4"
                 size="large"
-                @click="startQuickCharging"
+                @click="openTimeDialog"
                 :loading="startingQuick"
                 height="52"
               >
                 <v-icon start size="18">mdi-play</v-icon>
-                Starten
+                Zeitbasiert starten
               </v-btn>
             </div>
           </div>
         </SectionCard>
       </div>
+
+      <ChargingDialog
+        v-model="showDialog"
+        :mode="dialogMode"
+        :initial-data="dialogData"
+        :title="dialogTitle"
+        :confirm-text="dialogConfirmText"
+        @confirm="handleDialogConfirm"
+      />
 
       <div v-if="completedSessions.length > 0" class="mb-6">
         <div
@@ -259,9 +259,14 @@ const savingQuick = ref(false);
 const startingQuick = ref(false);
 let durationInterval: NodeJS.Timeout | null = null;
 
-const quickStart = reactive({
+const showDialog = ref(false);
+const dialogMode = ref<'time' | 'manual'>('time');
+const dialogData = ref({
   start_percentage: 20,
   end_percentage: 80,
+  wallbox_power: 11,
+  wallbox_loss: 10,
+  electricity_price: 0.32,
 });
 
 const settings = ref({
@@ -321,6 +326,16 @@ const updateActiveDuration = () => {
   }
 };
 
+const dialogTitle = computed(() => {
+  return dialogMode.value === 'time'
+    ? 'Zeitbasierten Ladevorgang starten'
+    : 'Ladevorgang manuell speichern';
+});
+
+const dialogConfirmText = computed(() => {
+  return dialogMode.value === 'time' ? 'Starten' : 'Speichern';
+});
+
 const loadSettings = async () => {
   const { data, error } = await supabase
     .from("settings")
@@ -333,6 +348,14 @@ const loadSettings = async () => {
       electricity_price: Number(data.electricity_price),
       wallbox_power: Number(data.wallbox_power),
       wallbox_loss: Number(data.wallbox_loss),
+    };
+
+    dialogData.value = {
+      start_percentage: 20,
+      end_percentage: 80,
+      wallbox_power: Number(data.wallbox_power),
+      wallbox_loss: Number(data.wallbox_loss),
+      electricity_price: Number(data.electricity_price),
     };
   }
 };
@@ -352,22 +375,54 @@ const loadSessions = async () => {
   loading.value = false;
 };
 
-const saveQuickSession = async () => {
-  savingQuick.value = true;
-
-  const percentageDiff =
-    quickStart.end_percentage - quickStart.start_percentage;
-  const netEnergy = (settings.value.battery_capacity * percentageDiff) / 100;
-  const energyWithLoss = netEnergy * (1 + settings.value.wallbox_loss / 100);
-  const totalCost = energyWithLoss * settings.value.electricity_price;
-
-  const sessionData = {
-    start_percentage: quickStart.start_percentage,
-    end_percentage: quickStart.end_percentage,
-    battery_capacity: settings.value.battery_capacity,
-    electricity_price: settings.value.electricity_price,
+const openManualDialog = () => {
+  dialogMode.value = 'manual';
+  dialogData.value = {
+    start_percentage: 20,
+    end_percentage: 80,
     wallbox_power: settings.value.wallbox_power,
     wallbox_loss: settings.value.wallbox_loss,
+    electricity_price: settings.value.electricity_price,
+  };
+  showDialog.value = true;
+};
+
+const openTimeDialog = () => {
+  dialogMode.value = 'time';
+  dialogData.value = {
+    start_percentage: 20,
+    end_percentage: 80,
+    wallbox_power: settings.value.wallbox_power,
+    wallbox_loss: settings.value.wallbox_loss,
+    electricity_price: settings.value.electricity_price,
+  };
+  showDialog.value = true;
+};
+
+const handleDialogConfirm = async (data: any) => {
+  if (dialogMode.value === 'manual') {
+    await saveManualSession(data);
+  } else {
+    await startTimeBasedCharging(data);
+  }
+  showDialog.value = false;
+};
+
+const saveManualSession = async (data: any) => {
+  savingQuick.value = true;
+
+  const percentageDiff = data.end_percentage - data.start_percentage;
+  const netEnergy = (settings.value.battery_capacity * percentageDiff) / 100;
+  const energyWithLoss = netEnergy * (1 + data.wallbox_loss / 100);
+  const totalCost = energyWithLoss * data.electricity_price;
+
+  const sessionData = {
+    start_percentage: data.start_percentage,
+    end_percentage: data.end_percentage,
+    battery_capacity: settings.value.battery_capacity,
+    electricity_price: data.electricity_price,
+    wallbox_power: data.wallbox_power,
+    wallbox_loss: data.wallbox_loss,
     energy_charged: energyWithLoss,
     total_cost: totalCost,
     status: "completed",
@@ -384,16 +439,16 @@ const saveQuickSession = async () => {
   savingQuick.value = false;
 };
 
-const startQuickCharging = async () => {
+const startTimeBasedCharging = async (data: any) => {
   startingQuick.value = true;
 
   const sessionData = {
-    start_percentage: quickStart.start_percentage,
-    end_percentage: quickStart.start_percentage,
+    start_percentage: data.start_percentage,
+    end_percentage: data.start_percentage,
     battery_capacity: settings.value.battery_capacity,
-    electricity_price: settings.value.electricity_price,
-    wallbox_power: settings.value.wallbox_power,
-    wallbox_loss: settings.value.wallbox_loss,
+    electricity_price: data.electricity_price,
+    wallbox_power: data.wallbox_power,
+    wallbox_loss: data.wallbox_loss,
     energy_charged: 0,
     total_cost: 0,
     start_time: new Date().toISOString(),
