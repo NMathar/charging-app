@@ -35,23 +35,20 @@
         <NuxtPage />
       </v-container>
     </v-main>
-
-    <v-snackbar
-      v-model="snackbar.show"
-      :color="snackbar.color"
-      :timeout="snackbar.timeout"
-      location="bottom"
-      class="mb-2"
-    >
-      {{ snackbar.message }}
-      <template v-slot:actions>
-        <v-btn
-          icon="mdi-close"
-          size="small"
-          @click="hide"
-        />
-      </template>
-    </v-snackbar>
+    <ClientOnly>
+      <v-snackbar
+        v-model="snackbar.show"
+        :color="snackbar.color"
+        :timeout="snackbar.timeout"
+        location="bottom"
+        class="mb-2"
+      >
+        {{ snackbar.message }}
+        <template v-slot:actions>
+          <v-btn icon="mdi-close" size="small" @click="hide" />
+        </template>
+      </v-snackbar>
+    </ClientOnly>
   </v-app>
 </template>
 
