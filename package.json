@@ -15,5 +15,8 @@
     "@supabase/supabase-js": "^2.101.1",
     "nuxt": "^3.13.0",
     "vuetify": "^4.0.4"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.98.0"
   }
 }

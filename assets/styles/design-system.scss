@@ -1,0 +1,346 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap');
+
+// Typography
+$font-headline: 'Manrope', sans-serif;
+$font-body: 'Inter', sans-serif;
+
+// Colors - Material Design 3 Tokens
+$primary: #00497d;
+$primary-container: #0061a4;
+$on-primary: #ffffff;
+$primary-fixed: #d1e4ff;
+
+$secondary: #535f70;
+$secondary-container: #d7e3f8;
+$secondary-fixed: #d7e3f8;
+
+$tertiary: #52405f;
+$tertiary-fixed: #f3daff;
+
+$surface: #f8f9ff;
+$surface-container-low: #f2f3f9;
+$surface-container: #eceef3;
+$surface-container-high: #e7e8ee;
+$surface-container-highest: #e1e2e8;
+$surface-container-lowest: #ffffff;
+
+$on-surface: #191c20;
+$on-surface-variant: #414750;
+$outline: #717782;
+$outline-variant: #c1c7d2;
+
+$error: #ba1a1a;
+
+// Typography Classes
+.headline-xl {
+  font-family: $font-headline;
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.headline-lg {
+  font-family: $font-headline;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.headline-md {
+  font-family: $font-headline;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.headline-sm {
+  font-family: $font-headline;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.title {
+  font-family: $font-headline;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.body-lg {
+  font-family: $font-body;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.body-md {
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.body-sm {
+  font-family: $font-body;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.label-lg {
+  font-family: $font-body;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.label-md {
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.label-sm {
+  font-family: $font-body;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.label-xs {
+  font-family: $font-body;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.display-value {
+  font-family: $font-headline;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+// Card Styles
+.card-primary {
+  background: $surface-container-lowest;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px -10px rgba(0, 73, 125, 0.08);
+  overflow: hidden;
+}
+
+.card-secondary {
+  background: $surface-container-low;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.card-tertiary {
+  background: $surface-container-lowest;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+// Input Styles - "Soft Well" Design
+.input-soft-well {
+  background: $surface-container-highest;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-family: $font-headline;
+  font-size: 28px;
+  font-weight: 700;
+  color: $on-surface;
+  outline: none;
+  width: 100%;
+  transition: all 0.3s ease;
+
+  &:focus {
+    ring: 2px solid rgba($primary-container, 0.2);
+    box-shadow: 0 0 0 2px rgba($primary-container, 0.2);
+  }
+
+  &::placeholder {
+    color: $outline;
+    opacity: 0.5;
+  }
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.input-unit {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: $font-body;
+  font-size: 16px;
+  font-weight: 500;
+  color: $outline;
+}
+
+// Icon Containers
+.icon-container-primary {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: $primary-fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .v-icon {
+    color: $primary;
+  }
+}
+
+.icon-container-tertiary {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: $tertiary-fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .v-icon {
+    color: $tertiary;
+  }
+}
+
+.icon-container-sm {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: $surface-container-low;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+// Header
+.glass-header {
+  background: rgba(248, 249, 255, 0.8);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 40px -10px rgba(0, 73, 125, 0.08);
+}
+
+// Gradient
+.gradient-primary {
+  background: linear-gradient(135deg, $primary 0%, $primary-container 100%);
+}
+
+// Divider
+.divider-subtle {
+  height: 1px;
+  background: $outline-variant;
+  opacity: 0.15;
+  width: 100%;
+}
+
+// Badges
+.badge-info {
+  padding: 6px 12px;
+  background: $secondary-container;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  span {
+    font-family: $font-body;
+    font-size: 11px;
+    font-weight: 600;
+    color: $secondary;
+  }
+}
+
+// Bottom Navigation
+.bottom-nav {
+  background: rgba(248, 249, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-radius: 32px 32px 0 0;
+  box-shadow: 0 -10px 30px rgba(0, 73, 125, 0.05);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+  padding: 8px 0;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &.active {
+    background: $primary-container;
+    border-radius: 20px;
+    padding: 12px 24px;
+    min-width: 76px;
+    opacity: 1;
+
+    .v-icon {
+      color: white;
+    }
+
+    span {
+      color: white;
+    }
+  }
+
+  span {
+    font-family: $font-body;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 6px;
+  }
+}
+
+// Utility Classes
+.rounded-xl {
+  border-radius: 12px;
+}
+
+.rounded-2xl {
+  border-radius: 16px;
+}
+
+.rounded-3xl {
+  border-radius: 20px;
+}
+
+.rounded-4xl {
+  border-radius: 24px;
+}
+
+.shadow-ambient {
+  box-shadow: 0 20px 40px -10px rgba(0, 73, 125, 0.08);
+}
+
+.shadow-soft {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
