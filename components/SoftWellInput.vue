@@ -2,8 +2,8 @@
   <div class="mb-4">
     <label v-if="label" class="label-sm block text-on-surface-variant mb-3">
       {{ label }}
-    </label> 
-    <div class="relative">
+    </label>
+    <div style="position: relative;">
       <input
         :value="modelValue"
         @input="$emit('update:modelValue', parseFloat($event.target.value) || 0)"
