@@ -40,7 +40,8 @@ jobs:
       - name: Test FTP connection (lftp)
         run: |
           # plain FTP
-          lftp -e "quit" -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" "${{ secrets.FTP_SERVER }}" || true
+          set -x 
+          lftp -d -e "quit" -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" "${{ secrets.FTP_SERVER }}" || true
 
           # FTPS (explicit TLS) – falls dein Server das verlangt
           lftp -e "set ftp:ssl-force true; set ftp:ssl-protect-data true; quit" \
@@ -54,6 +55,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          passive: false
           local-dir: dist/
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           dangerous-clean-slate: false
