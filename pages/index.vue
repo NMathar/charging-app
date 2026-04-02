@@ -2,35 +2,35 @@
   <div class="min-h-screen bg-[#f8f9ff] pb-32">
     <header class="fixed top-0 w-full z-50 glass-header flex items-center justify-between px-6 py-4">
       <div class="flex items-center gap-3">
-        <v-icon icon="mdi-car-electric" color="#0061A4" />
-        <h1 class="text-xl font-bold text-[#00497d] tracking-tight">EV Intelligence</h1>
+        <v-icon icon="mdi-car-electric" color="#0061A4" size="28" />
+        <h1 class="text-xl font-extrabold text-[#00497d] tracking-tight" style="font-family: 'Manrope', sans-serif;">EV Intelligence</h1>
       </div>
       <div class="flex items-center gap-4">
-        <v-btn icon variant="text" color="#717782">
-          <v-icon>mdi-bell-outline</v-icon>
+        <v-btn icon variant="text" color="#717782" size="small">
+          <v-icon size="20">mdi-bell-outline</v-icon>
         </v-btn>
-        <div class="w-8 h-8 rounded-full bg-[#d7e3f8] flex items-center justify-center">
-          <v-icon size="small" color="#535f70">mdi-account</v-icon>
+        <div class="w-10 h-10 rounded-full bg-[#d7e3f8] flex items-center justify-center">
+          <v-icon size="20" color="#535f70">mdi-account</v-icon>
         </div>
       </div>
     </header>
 
     <main class="pt-24 px-4 max-w-lg mx-auto">
       <header class="mb-6">
-        <p class="text-xs font-medium uppercase tracking-widest text-[#414750] mb-2">System-Status</p>
-        <h2 class="text-3xl font-bold text-[#191c20] tracking-tight">Übersicht</h2>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#414750] mb-2" style="font-family: 'Inter', sans-serif;">System-Status</p>
+        <h2 class="text-[32px] font-extrabold text-[#191c20] tracking-tight leading-tight" style="font-family: 'Manrope', sans-serif;">Übersicht</h2>
       </header>
 
-      <div v-if="activeSession" class="bg-[#ffffff] rounded-2xl overflow-hidden mb-6 shadow-[0_20px_40px_-10px_rgba(0,73,125,0.08)]">
-        <div class="flex items-center gap-2 px-6 pt-4">
-          <div class="px-3 py-1 bg-[#d7e3f8] rounded-full">
-            <span class="text-xs font-medium text-[#535f70]">Laufender Ladevorgang</span>
+      <div v-if="activeSession" class="bg-[#ffffff] rounded-[24px] overflow-hidden mb-6 shadow-[0_20px_40px_-10px_rgba(0,73,125,0.08)]">
+        <div class="flex items-center gap-2 px-6 pt-5">
+          <div class="px-3 py-1.5 bg-[#d7e3f8] rounded-full">
+            <span class="text-[11px] font-semibold text-[#535f70]" style="font-family: 'Inter', sans-serif;">Laufender Ladevorgang</span>
           </div>
-          <v-icon color="#0061a4" size="small">mdi-lightning-bolt</v-icon>
+          <v-icon color="#0061a4" size="18">mdi-lightning-bolt</v-icon>
         </div>
 
         <div class="p-6">
-          <h3 class="text-lg font-bold text-[#191c20] mb-6">Heimladestation</h3>
+          <h3 class="text-[20px] font-bold text-[#191c20] mb-6" style="font-family: 'Manrope', sans-serif;">Heimladestation</h3>
 
           <div class="flex items-center justify-center mb-6">
             <div class="relative w-48 h-48">
@@ -62,58 +62,61 @@
                 </defs>
               </svg>
               <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <div class="text-4xl font-bold text-[#191c20]">{{ currentBatteryPercentage }}%</div>
-                <div class="text-xs text-[#414750] uppercase tracking-widest">SOC</div>
+                <div class="text-[48px] font-extrabold text-[#191c20]" style="font-family: 'Manrope', sans-serif;">{{ currentBatteryPercentage }}%</div>
+                <div class="text-[11px] text-[#414750] uppercase tracking-[0.08em] font-semibold" style="font-family: 'Inter', sans-serif;">SOC</div>
               </div>
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <div class="text-xs text-[#414750] uppercase tracking-widest mb-1">Leistung</div>
-              <div class="text-xl font-bold text-[#191c20]">{{ activeSession.wallbox_power }} kW</div>
+              <div class="text-[11px] text-[#414750] uppercase tracking-[0.08em] mb-2 font-semibold" style="font-family: 'Inter', sans-serif;">Leistung</div>
+              <div class="text-[24px] font-bold text-[#191c20]" style="font-family: 'Manrope', sans-serif;">{{ activeSession.wallbox_power }} kW</div>
             </div>
             <div>
-              <div class="text-xs text-[#414750] uppercase tracking-widest mb-1">Dauer</div>
-              <div class="text-xl font-bold text-[#191c20]">{{ activeDuration }}</div>
+              <div class="text-[11px] text-[#414750] uppercase tracking-[0.08em] mb-2 font-semibold" style="font-family: 'Inter', sans-serif;">Dauer</div>
+              <div class="text-[24px] font-bold text-[#191c20]" style="font-family: 'Manrope', sans-serif;">{{ activeDuration }}</div>
             </div>
           </div>
 
           <v-btn
             color="#ba1a1a"
             block
-            size="large"
-            class="rounded-xl"
+            size="x-large"
+            class="rounded-[16px]"
+            style="font-family: 'Manrope', sans-serif; text-transform: none; letter-spacing: 0; font-size: 16px;"
             @click="stopActiveCharging"
             :loading="stoppingCharge"
+            height="56"
           >
-            <v-icon start>mdi-stop-circle-outline</v-icon>
+            <v-icon start size="20">mdi-stop-circle-outline</v-icon>
             Ladevorgang stoppen
           </v-btn>
         </div>
       </div>
 
       <div v-else class="space-y-4 mb-8">
-        <div class="bg-[#f2f3f9] rounded-xl p-6">
+        <div class="bg-[#f2f3f9] rounded-[20px] p-6">
           <div class="flex items-center gap-3 mb-6">
-            <div class="w-10 h-10 rounded-lg bg-[#d1e4ff] flex items-center justify-center">
-              <v-icon color="#00497d">mdi-battery-charging-high</v-icon>
+            <div class="w-12 h-12 rounded-[12px] bg-[#d1e4ff] flex items-center justify-center flex-shrink-0">
+              <v-icon color="#00497d" size="24">mdi-battery-charging-high</v-icon>
             </div>
-            <h3 class="font-bold text-lg">Schnellstart</h3>
+            <h3 class="font-bold text-[18px] text-[#191c20]" style="font-family: 'Manrope', sans-serif;">Schnellstart</h3>
           </div>
 
           <div class="space-y-6">
             <div>
-              <label class="block text-xs font-medium uppercase tracking-widest text-[#414750] mb-2">Start (%)</label>
+              <label class="block text-[11px] font-semibold uppercase tracking-[0.08em] text-[#414750] mb-3" style="font-family: 'Inter', sans-serif;">Start (%)</label>
               <div class="relative">
                 <input
                   v-model.number="quickStart.start_percentage"
-                  class="w-full bg-[#e1e2e8] border-none rounded-lg py-4 px-4 font-bold text-xl focus:ring-2 focus:ring-[#0061a4]/20 transition-all outline-none"
+                  class="w-full bg-[#e1e2e8] border-none rounded-[12px] py-4 pl-5 pr-16 font-bold text-[28px] focus:ring-2 focus:ring-[#0061a4]/20 transition-all outline-none text-[#191c20]"
+                  style="font-family: 'Manrope', sans-serif;"
                   type="number"
                   min="0"
                   max="100"
                 />
-                <div class="absolute right-4 top-1/2 -translate-y-1/2 text-[#414750] font-medium">%</div>
+                <div class="absolute right-5 top-1/2 -translate-y-1/2 text-[#717782] font-medium text-base" style="font-family: 'Inter', sans-serif;">%</div>
               </div>
             </div>
 
@@ -122,22 +125,26 @@
                 color="#0061a4"
                 block
                 size="large"
-                class="rounded-xl"
+                class="rounded-[12px]"
+                style="font-family: 'Manrope', sans-serif; text-transform: none; letter-spacing: 0; font-size: 15px;"
                 @click="saveQuickSession"
                 :loading="savingQuick"
+                height="52"
               >
-                <v-icon start>mdi-content-save</v-icon>
+                <v-icon start size="18">mdi-content-save</v-icon>
                 Speichern
               </v-btn>
               <v-btn
                 color="#00497d"
                 block
                 size="large"
-                class="rounded-xl"
+                class="rounded-[12px]"
+                style="font-family: 'Manrope', sans-serif; text-transform: none; letter-spacing: 0; font-size: 15px;"
                 @click="startQuickCharging"
                 :loading="startingQuick"
+                height="52"
               >
-                <v-icon start>mdi-play</v-icon>
+                <v-icon start size="18">mdi-play</v-icon>
                 Starten
               </v-btn>
             </div>
@@ -146,25 +153,26 @@
       </div>
 
       <div v-if="completedSessions.length > 0" class="mb-6">
-        <div class="bg-[#0061a4] rounded-2xl p-6 text-white mb-4 shadow-[0_20px_40px_-10px_rgba(0,73,125,0.08)]">
+        <div class="rounded-[24px] p-6 text-white mb-6 shadow-[0_20px_40px_-10px_rgba(0,73,125,0.08)]" style="background: linear-gradient(135deg, #00497d 0%, #0061a4 100%);">
           <div class="flex items-center gap-2 mb-2">
-            <v-icon color="white" size="small">mdi-currency-eur</v-icon>
-            <p class="text-sm opacity-90">Gesamtkosten</p>
+            <v-icon color="white" size="18">mdi-currency-eur</v-icon>
+            <p class="text-sm opacity-90" style="font-family: 'Inter', sans-serif;">Gesamtkosten</p>
           </div>
-          <p class="text-4xl font-bold">{{ totalCost.toFixed(2) }} €</p>
-          <p class="text-xs opacity-75 mt-1">Aktueller Monat</p>
+          <p class="text-[48px] font-extrabold leading-none" style="font-family: 'Manrope', sans-serif;">{{ totalCost.toFixed(2) }} €</p>
+          <p class="text-xs opacity-75 mt-2" style="font-family: 'Inter', sans-serif;">Aktueller Monat</p>
         </div>
 
         <div class="flex justify-between items-center mb-4">
-          <h3 class="font-bold text-lg">Abgeschlossene Ladevorgänge</h3>
+          <h3 class="font-bold text-[18px] text-[#191c20]" style="font-family: 'Manrope', sans-serif;">Abgeschlossene Ladevorgänge</h3>
           <v-btn
             variant="text"
             color="#0061a4"
             size="small"
             @click="showAllSessions = !showAllSessions"
+            style="font-family: 'Inter', sans-serif; text-transform: none; letter-spacing: 0;"
           >
             {{ showAllSessions ? 'Weniger' : 'Details' }}
-            <v-icon end>{{ showAllSessions ? 'mdi-chevron-up' : 'mdi-chevron-right' }}</v-icon>
+            <v-icon end size="18">{{ showAllSessions ? 'mdi-chevron-up' : 'mdi-chevron-right' }}</v-icon>
           </v-btn>
         </div>
 
@@ -172,28 +180,28 @@
           <div
             v-for="(session, index) in displayedSessions"
             :key="session.id"
-            class="bg-[#ffffff] rounded-xl p-4 flex items-center justify-between"
+            class="bg-[#ffffff] rounded-[16px] p-4 flex items-center justify-between shadow-sm"
           >
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-lg bg-[#f2f3f9] flex items-center justify-center">
-                <v-icon :color="getStationColor(session)" size="small">{{ getStationIcon(session) }}</v-icon>
+              <div class="w-11 h-11 rounded-[10px] bg-[#f2f3f9] flex items-center justify-center flex-shrink-0">
+                <v-icon :color="getStationColor(session)" size="20">{{ getStationIcon(session) }}</v-icon>
               </div>
               <div>
-                <p class="font-bold text-sm">{{ getStationName(session) }}</p>
-                <p class="text-xs text-[#414750]">{{ formatShortDate(session.created_at) }} • {{ session.energy_charged.toFixed(1) }} kWh</p>
+                <p class="font-bold text-[15px] text-[#191c20]" style="font-family: 'Manrope', sans-serif;">{{ getStationName(session) }}</p>
+                <p class="text-xs text-[#414750]" style="font-family: 'Inter', sans-serif;">{{ formatShortDate(session.created_at) }} • {{ session.energy_charged.toFixed(1) }} kWh</p>
               </div>
             </div>
             <div class="text-right">
-              <p class="font-bold text-sm text-[#0061a4]">{{ session.total_cost.toFixed(2) }} €</p>
-              <p class="text-xs text-[#52405f]">Erfolgreich</p>
+              <p class="font-bold text-[15px] text-[#0061a4]" style="font-family: 'Manrope', sans-serif;">{{ session.total_cost.toFixed(2) }} €</p>
+              <p class="text-xs text-[#52405f]" style="font-family: 'Inter', sans-serif;">Erfolgreich</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div v-else-if="!loading" class="bg-[#d1e4ff]/30 rounded-2xl p-6 text-center">
+      <div v-else-if="!loading" class="bg-[#d1e4ff]/30 rounded-[20px] p-8 text-center">
         <v-icon size="48" color="#0061a4" class="mb-3">mdi-information-outline</v-icon>
-        <p class="text-[#414750]">Noch keine Ladevorgänge vorhanden</p>
+        <p class="text-[#414750]" style="font-family: 'Inter', sans-serif;">Noch keine Ladevorgänge vorhanden</p>
       </div>
 
       <div v-if="loading" class="text-center py-12">
@@ -201,22 +209,22 @@
       </div>
     </main>
 
-    <nav class="fixed bottom-0 w-full z-50 bg-[#f8f9ff]/90 backdrop-blur-md rounded-t-3xl shadow-[0_-10px_30px_rgba(0,73,125,0.05)] flex justify-around items-center pt-3 pb-6 px-4">
-      <v-btn variant="text" color="#191c20" class="flex-col" style="opacity: 0.6">
-        <v-icon>mdi-calculator</v-icon>
-        <span class="text-[11px] font-medium uppercase tracking-wider mt-1">Calculator</span>
+    <nav class="fixed bottom-0 w-full z-50 bg-[#f8f9ff]/90 backdrop-blur-md rounded-t-[32px] shadow-[0_-10px_30px_rgba(0,73,125,0.05)] flex justify-around items-center pt-4 pb-7 px-4">
+      <v-btn variant="text" color="#717782" class="flex-col h-auto py-2" style="min-width: 64px; opacity: 0.6">
+        <v-icon size="24">mdi-calculator-variant</v-icon>
+        <span class="text-[10px] font-semibold uppercase tracking-[0.08em] mt-1.5" style="font-family: 'Inter', sans-serif;">Calculator</span>
       </v-btn>
-      <v-btn variant="text" class="flex-col bg-[#0061A4] text-white rounded-2xl px-5">
-        <v-icon>mdi-chart-line</v-icon>
-        <span class="text-[11px] font-medium uppercase tracking-wider mt-1">Trends</span>
+      <div class="flex flex-col items-center bg-[#0061A4] rounded-[20px] px-6 py-3 h-auto" style="min-width: 76px;">
+        <v-icon color="white" size="24">mdi-chart-line</v-icon>
+        <span class="text-white text-[10px] font-semibold uppercase tracking-[0.08em] mt-1.5" style="font-family: 'Inter', sans-serif;">Trends</span>
+      </div>
+      <v-btn variant="text" color="#717782" class="flex-col h-auto py-2" style="min-width: 64px; opacity: 0.6">
+        <v-icon size="24">mdi-ev-station</v-icon>
+        <span class="text-[10px] font-semibold uppercase tracking-[0.08em] mt-1.5" style="font-family: 'Inter', sans-serif;">Stations</span>
       </v-btn>
-      <v-btn variant="text" color="#191c20" class="flex-col" style="opacity: 0.6">
-        <v-icon>mdi-ev-station</v-icon>
-        <span class="text-[11px] font-medium uppercase tracking-wider mt-1">Stations</span>
-      </v-btn>
-      <v-btn variant="text" color="#191c20" class="flex-col" style="opacity: 0.6" to="/settings">
-        <v-icon>mdi-account</v-icon>
-        <span class="text-[11px] font-medium uppercase tracking-wider mt-1">Profile</span>
+      <v-btn variant="text" color="#717782" class="flex-col h-auto py-2" style="min-width: 64px; opacity: 0.6" to="/settings">
+        <v-icon size="24">mdi-account</v-icon>
+        <span class="text-[10px] font-semibold uppercase tracking-[0.08em] mt-1.5" style="font-family: 'Inter', sans-serif;">Profile</span>
       </v-btn>
     </nav>
   </div>
@@ -434,9 +442,21 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap');
+
 .glass-header {
   background: rgba(248, 249, 255, 0.8);
   backdrop-filter: blur(12px);
   box-shadow: 0 20px 40px -10px rgba(0, 73, 125, 0.08);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 </style>
