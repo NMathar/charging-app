@@ -1,19 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#f8f9ff] pb-32">
-    <header class="fixed top-0 w-full z-50 glass-header flex items-center justify-between px-6 py-4">
-      <div class="flex items-center gap-3">
-        <v-icon icon="mdi-car-electric" color="#0061A4" size="28" />
-        <h1 class="text-xl font-extrabold text-[#00497d] tracking-tight" style="font-family: 'Manrope', sans-serif;">EV Intelligence</h1>
-      </div>
-      <div class="flex items-center gap-4">
-        <v-btn icon variant="text" color="#717782" size="small">
-          <v-icon size="20">mdi-bell-outline</v-icon>
-        </v-btn>
-        <div class="w-10 h-10 rounded-full bg-[#d7e3f8] flex items-center justify-center">
-          <v-icon size="20" color="#535f70">mdi-account</v-icon>
-        </div>
-      </div>
-    </header>
+  <div class="min-h-screen pb-32">
 
     <main class="pt-24 px-4 max-w-lg mx-auto">
       <header class="mb-8">
@@ -53,7 +39,7 @@
             <div>
               <label class="block text-[11px] font-semibold uppercase tracking-[0.05em] text-[#414750] mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: 0.08em;">Ladeverluste (%)</label>
               <div class="relative">
-                <input
+                <v-input
                   v-model.number="form.wallbox_loss"
                   class="w-full bg-[#e1e2e8] border-none rounded-[12px] py-4 pl-5 pr-16 font-bold text-[28px] focus:ring-2 focus:ring-[#0061a4]/20 transition-all outline-none text-[#191c20]"
                   style="font-family: 'Manrope', sans-serif;"

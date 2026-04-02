@@ -1,20 +1,5 @@
 <template>
   <div class="min-h-screen bg-[#f8f9ff] pb-32">
-    <header class="fixed top-0 w-full z-50 glass-header flex items-center justify-between px-6 py-4">
-      <div class="flex items-center gap-3">
-        <v-icon icon="mdi-car-electric" color="#0061A4" size="28" />
-        <h1 class="text-xl font-extrabold text-[#00497d] tracking-tight" style="font-family: 'Manrope', sans-serif;">EV Intelligence</h1>
-      </div>
-      <div class="flex items-center gap-4">
-        <v-btn icon variant="text" color="#717782" size="small">
-          <v-icon size="20">mdi-bell-outline</v-icon>
-        </v-btn>
-        <div class="w-10 h-10 rounded-full bg-[#d7e3f8] flex items-center justify-center">
-          <v-icon size="20" color="#535f70">mdi-account</v-icon>
-        </div>
-      </div>
-    </header>
-
     <main class="pt-24 px-4 max-w-lg mx-auto">
       <header class="mb-6">
         <p class="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#414750] mb-2" style="font-family: 'Inter', sans-serif;">System-Status</p>
