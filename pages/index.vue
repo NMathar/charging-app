@@ -1,233 +1,240 @@
 <template>
-  <div class="min-h-screen pb-32" style="background: var(--v-theme-surface)">
-    <main class="pt-24 px-4 max-w-lg mx-auto">
-      <header class="mb-6">
-        <h2 class="headline-lg">Übersicht</h2>
-      </header>
+  <client-only>
+    <div class="min-h-screen pb-32" style="background: var(--v-theme-surface)">
+      <main class="pt-24 px-4 max-w-lg mx-auto">
+        <header class="mb-6">
+          <h2 class="headline-lg">Übersicht</h2>
+        </header>
 
-      <div v-if="activeSession" class="card-primary mb-6">
-        <div class="px-6 pt-5">
-          <div class="badge-info">
-            <span>Laufender Ladevorgang</span>
-          </div>
-          <div class="text-right">
-            <v-icon color="primary-container " size="18"
-              >mdi-lightning-bolt</v-icon
-            >
-          </div>
-        </div>
-
-        <div class="pa-6 text-center">
-          <h3 class="headline-sm mb-6">Wallbox</h3>
-
-          <v-progress
-            :model-value="(currentBatteryPercentage / 100) * 100"
-            label="Laden..."
-            hide-label
-            details-position="bottom"
-          >
-            <template v-slot:default="{ percent }">
-              <v-progress-circular
-                :model-value="percent"
-                color="primary-container"
-                size="150"
-                width="15"
-                rounded
+        <div v-if="activeSession" class="card-primary mb-6">
+          <div class="px-6 pt-5">
+            <div class="badge-info">
+              <span>Laufender Ladevorgang</span>
+            </div>
+            <div class="text-right">
+              <v-icon color="primary-container " size="18"
+                >mdi-lightning-bolt</v-icon
               >
-                <div class="d-flex align-baseline mr-n3">
-                  <div class="text-headline-large text-medium-emphasis">
-                    {{ percent.toFixed() }}
-                  </div>
-                  <span class="ml-1">%</span>
-                </div>
-              </v-progress-circular>
-            </template>
-
-            <template v-slot:value="{ percent }">
-              <div class="text-body-medium">
-                <v-scroll-y-transition mode="out-in">
-                  <div v-if="percent > 75" key="finalizing">Fertig...</div>
-                  <div v-else key="loading">Laden...</div>
-                </v-scroll-y-transition>
-              </div>
-            </template>
-          </v-progress>
-
-          <v-row class="mb-6">
-            <v-col class="text-center">
-              <div class="label-sm text-on-surface-variant mb-2">Leistung</div>
-              <div class="headline-md">
-                {{ activeSession.wallbox_power }} kW
-              </div>
-            </v-col>
-            <v-col class="text-center">
-              <div class="label-sm text-on-surface-variant mb-2">Dauer</div>
-              <div class="headline-md">{{ activeDuration }}</div>
-            </v-col>
-          </v-row>
-
-          <v-btn
-            color="error"
-            block
-            class="my-4"
-            size="x-large"
-            @click="stopActiveCharging"
-            :loading="stoppingCharge"
-            height="56"
-          >
-            <v-icon start size="20">mdi-stop-circle-outline</v-icon>
-            Ladevorgang stoppen
-          </v-btn>
-        </div>
-      </div>
-
-      <div v-else class="space-y-4 mb-8">
-        <SectionCard
-          title="Schnellstart"
-          icon="mdi-battery-charging-high"
-          variant="primary"
-        >
-          <div class="space-y-6">
-            <div class="grid grid-cols-2 ga3">
-              <v-btn
-                color="primary-container"
-                block
-                class="my-4"
-                size="large"
-                @click="openManualDialog"
-                :loading="savingQuick"
-                height="52"
-              >
-                <v-icon start size="18">mdi-content-save</v-icon>
-                Manuell speichern
-              </v-btn>
-              <v-btn
-                color="primary"
-                block
-                class="my-4"
-                size="large"
-                @click="openTimeDialog"
-                :loading="startingQuick"
-                height="52"
-              >
-                <v-icon start size="18">mdi-play</v-icon>
-                Zeitbasiert starten
-              </v-btn>
             </div>
           </div>
-        </SectionCard>
-      </div>
 
-      <ChargingDialog
-        v-model="showDialog"
-        :mode="dialogMode"
-        :initial-data="dialogData"
-        :title="dialogTitle"
-        :confirm-text="dialogConfirmText"
-        @confirm="handleDialogConfirm"
-      />
+          <div class="pa-6 text-center">
+            <h3 class="headline-sm mb-6">Wallbox</h3>
 
-      <div v-if="completedSessions.length > 0" class="mb-6">
-        <div
-          class="gradient-primary rounded-4xl pa-6 text-white mb-6 shadow-ambient"
-        >
-          <div class="mb-2">
-            <v-icon color="white" size="18">mdi-currency-eur</v-icon>
-            <p class="body-sm opacity-90">Gesamtkosten</p>
-          </div>
-          <p class="headline-xl">
-            {{
-              totalCost.toLocaleString("de-DE", {
-                style: "currency",
-                currency: "EUR",
-              })
-            }}
-          </p>
-          <p class="body-sm opacity-75 mt-2">Aktueller Monat</p>
-        </div>
-
-        <div class="mb-4">
-          <h3 class="title">Abgeschlossene Ladevorgänge</h3>
-          <v-btn
-            variant="text"
-            color="primary-container"
-            size="small"
-            @click="showAllSessions = !showAllSessions"
-          >
-            {{ showAllSessions ? "Weniger" : "Details" }}
-            <v-icon end size="18">{{
-              showAllSessions ? "mdi-chevron-up" : "mdi-chevron-right"
-            }}</v-icon>
-          </v-btn>
-        </div>
-
-        <div>
-          <v-card
-            variant="tonal"
-            class="mb-4"
-            :color="index % 2 === 0 ? 'secondary' : 'tertiary-container'"
-            v-for="(session, index) in displayedSessions"
-            :key="session.id"
-          >
-            <v-card-text>
-              <v-row class="mb-1">
-                <div class="icon-container-sm">
-                  <v-icon :color="getStationColor(session)" size="20">{{
-                    getStationIcon(session)
-                  }}</v-icon>
-                </div>
-                <div>
-                  <p class="text-lg-title-large text-sm-title-medium">
-                    {{ getStationName(session) }}
-                  </p>
-                  <p
-                    class="text-lg-body-large text-sm-body-medium text-on-surface-variant"
-                  >
-                    {{ formatShortDateWithTime(session.created_at) }} Uhr •
-                    {{ session.energy_charged.toFixed(1) }} kWh
-                  </p>
-                  <p class="text-lg-body-large text-sm-body-medium text-on-surface-variant">
-                    {{ session.start_percentage }}% → {{ session.end_percentage }}%
-                  </p>
-                </div>
-              </v-row>
-              <div class="text-right">
-                <p
-                  class="text-lg-headline-medium text-sm-headline-small"
-                  style="color: var(--v-theme-primary-container)"
+            <v-progress
+              :model-value="(currentBatteryPercentage / 100) * 100"
+              label="Laden..."
+              hide-label
+              details-position="bottom"
+            >
+              <template v-slot:default="{ percent }">
+                <v-progress-circular
+                  :model-value="percent"
+                  color="primary-container"
+                  size="150"
+                  width="15"
+                  rounded
                 >
-                  {{
-                    session.total_cost.toLocaleString("de-DE", {
-                      style: "currency",
-                      currency: "EUR",
-                    })
-                  }}
-                </p>
-                <p class="body-sm text-on-surface-variant">Erfolgreich</p>
-              </div>
-            </v-card-text>
-          </v-card>
+                  <div class="d-flex align-baseline mr-n3">
+                    <div class="text-headline-large text-medium-emphasis">
+                      {{ percent.toFixed() }}
+                    </div>
+                    <span class="ml-1">%</span>
+                  </div>
+                </v-progress-circular>
+              </template>
+
+              <template v-slot:value="{ percent }">
+                <div class="text-body-medium">
+                  <v-scroll-y-transition mode="out-in">
+                    <div v-if="percent > 75" key="finalizing">Fertig...</div>
+                    <div v-else key="loading">Laden...</div>
+                  </v-scroll-y-transition>
+                </div>
+              </template>
+            </v-progress>
+
+            <v-row class="mb-6">
+              <v-col class="text-center">
+                <div class="label-sm text-on-surface-variant mb-2">
+                  Leistung
+                </div>
+                <div class="headline-md">
+                  {{ activeSession.wallbox_power }} kW
+                </div>
+              </v-col>
+              <v-col class="text-center">
+                <div class="label-sm text-on-surface-variant mb-2">Dauer</div>
+                <div class="headline-md">{{ activeDuration }}</div>
+              </v-col>
+            </v-row>
+
+            <v-btn
+              color="error"
+              block
+              class="my-4"
+              size="x-large"
+              @click="stopActiveCharging"
+              :loading="stoppingCharge"
+              height="56"
+            >
+              <v-icon start size="20">mdi-stop-circle-outline</v-icon>
+              Ladevorgang stoppen
+            </v-btn>
+          </div>
         </div>
-      </div>
 
-      <div
-        v-else-if="!loading"
-        class="rounded-3xl pa-8 text-center"
-        style="background: rgba(var(--v-theme-primary-fixed), 0.3)"
-      >
-        <v-icon size="48" color="primary-container" class="mb-3"
-          >mdi-information-outline</v-icon
+        <div v-else class="space-y-4 mb-8">
+          <SectionCard
+            title="Schnellstart"
+            icon="mdi-battery-charging-high"
+            variant="primary"
+          >
+            <div class="space-y-6">
+              <div class="grid grid-cols-2 ga3">
+                <v-btn
+                  color="primary-container"
+                  block
+                  class="my-4"
+                  size="large"
+                  @click="openManualDialog"
+                  :loading="savingQuick"
+                  height="52"
+                >
+                  <v-icon start size="18">mdi-content-save</v-icon>
+                  Manuell speichern
+                </v-btn>
+                <v-btn
+                  color="primary"
+                  block
+                  class="my-4"
+                  size="large"
+                  @click="openTimeDialog"
+                  :loading="startingQuick"
+                  height="52"
+                >
+                  <v-icon start size="18">mdi-play</v-icon>
+                  Zeitbasiert starten
+                </v-btn>
+              </div>
+            </div>
+          </SectionCard>
+        </div>
+
+        <ChargingDialog
+          v-model="showDialog"
+          :mode="dialogMode"
+          :initial-data="dialogData"
+          :title="dialogTitle"
+          :confirm-text="dialogConfirmText"
+          @confirm="handleDialogConfirm"
+        />
+
+        <div v-if="completedSessions.length > 0" class="mb-6">
+          <div
+            class="gradient-primary rounded-4xl pa-6 text-white mb-6 shadow-ambient"
+          >
+            <div class="mb-2">
+              <v-icon color="white" size="18">mdi-currency-eur</v-icon>
+              <p class="body-sm opacity-90">Gesamtkosten</p>
+            </div>
+            <p class="headline-xl">
+              {{
+                totalCost.toLocaleString("de-DE", {
+                  style: "currency",
+                  currency: "EUR",
+                })
+              }}
+            </p>
+            <p class="body-sm opacity-75 mt-2">Aktueller Monat</p>
+          </div>
+
+          <div class="mb-4">
+            <h3 class="title">Abgeschlossene Ladevorgänge</h3>
+            <v-btn
+              variant="text"
+              color="primary-container"
+              size="small"
+              @click="showAllSessions = !showAllSessions"
+            >
+              {{ showAllSessions ? "Weniger" : "Details" }}
+              <v-icon end size="18">{{
+                showAllSessions ? "mdi-chevron-up" : "mdi-chevron-right"
+              }}</v-icon>
+            </v-btn>
+          </div>
+
+          <div>
+            <v-card
+              variant="tonal"
+              class="mb-4"
+              :color="index % 2 === 0 ? 'secondary' : 'tertiary-container'"
+              v-for="(session, index) in displayedSessions"
+              :key="session.id"
+            >
+              <v-card-text>
+                <v-row class="mb-1">
+                  <div class="icon-container-sm">
+                    <v-icon :color="getStationColor(session)" size="20">{{
+                      getStationIcon(session)
+                    }}</v-icon>
+                  </div>
+                  <div>
+                    <p class="text-lg-title-large text-sm-title-medium">
+                      {{ getStationName(session) }}
+                    </p>
+                    <p
+                      class="text-lg-body-large text-sm-body-medium text-on-surface-variant"
+                    >
+                      {{ formatShortDateWithTime(session.created_at) }} Uhr •
+                      {{ session.energy_charged.toFixed(1) }} kWh
+                    </p>
+                    <p
+                      class="text-lg-body-large text-sm-body-medium text-on-surface-variant"
+                    >
+                      {{ session.start_percentage }}% →
+                      {{ session.end_percentage }}%
+                    </p>
+                  </div>
+                </v-row>
+                <div class="text-right">
+                  <p
+                    class="text-lg-headline-medium text-sm-headline-small"
+                    style="color: var(--v-theme-primary-container)"
+                  >
+                    {{
+                      session.total_cost.toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })
+                    }}
+                  </p>
+                  <p class="body-sm text-on-surface-variant">Erfolgreich</p>
+                </div>
+              </v-card-text>
+            </v-card>
+          </div>
+        </div>
+
+        <div
+          v-else-if="!loading"
+          class="rounded-3xl pa-8 text-center"
+          style="background: rgba(var(--v-theme-primary-fixed), 0.3)"
         >
-        <p class="body-lg text-on-surface-variant">
-          Noch keine Ladevorgänge vorhanden
-        </p>
-      </div>
+          <v-icon size="48" color="primary-container" class="mb-3"
+            >mdi-information-outline</v-icon
+          >
+          <p class="body-lg text-on-surface-variant">
+            Noch keine Ladevorgänge vorhanden
+          </p>
+        </div>
 
-      <div v-if="loading" class="text-center py-12">
-        <v-progress-circular indeterminate color="primary-container" />
-      </div>
-    </main>
-  </div>
+        <div v-if="loading" class="text-center py-12">
+          <v-progress-circular indeterminate color="primary-container" />
+        </div>
+      </main>
+    </div>
+  </client-only>
 </template>
 
 <script setup lang="ts">
@@ -260,7 +267,7 @@ const startingQuick = ref(false);
 let durationInterval: NodeJS.Timeout | null = null;
 
 const showDialog = ref(false);
-const dialogMode = ref<'time' | 'manual'>('time');
+const dialogMode = ref<"time" | "manual">("time");
 const dialogData = ref({
   start_percentage: 20,
   end_percentage: 80,
@@ -327,13 +334,13 @@ const updateActiveDuration = () => {
 };
 
 const dialogTitle = computed(() => {
-  return dialogMode.value === 'time'
-    ? 'Zeitbasierten Ladevorgang starten'
-    : 'Ladevorgang manuell speichern';
+  return dialogMode.value === "time"
+    ? "Zeitbasierten Ladevorgang starten"
+    : "Ladevorgang manuell speichern";
 });
 
 const dialogConfirmText = computed(() => {
-  return dialogMode.value === 'time' ? 'Starten' : 'Speichern';
+  return dialogMode.value === "time" ? "Starten" : "Speichern";
 });
 
 const loadSettings = async () => {
@@ -376,7 +383,7 @@ const loadSessions = async () => {
 };
 
 const openManualDialog = () => {
-  dialogMode.value = 'manual';
+  dialogMode.value = "manual";
   dialogData.value = {
     start_percentage: 20,
     end_percentage: 80,
@@ -388,7 +395,7 @@ const openManualDialog = () => {
 };
 
 const openTimeDialog = () => {
-  dialogMode.value = 'time';
+  dialogMode.value = "time";
   dialogData.value = {
     start_percentage: 20,
     end_percentage: 80,
@@ -400,7 +407,7 @@ const openTimeDialog = () => {
 };
 
 const handleDialogConfirm = async (data: any) => {
-  if (dialogMode.value === 'manual') {
+  if (dialogMode.value === "manual") {
     await saveManualSession(data);
   } else {
     await startTimeBasedCharging(data);
