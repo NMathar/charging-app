@@ -66,6 +66,10 @@
               <v-col class="text-center">
                 <div class="label-sm text-on-surface-variant mb-2">Dauer</div>
                 <div class="headline-md">{{ activeDuration }}</div>
+                <div class="mt-2" style="font-size: 0.7rem; opacity: 0.6; line-height: 1.5;">
+                  <div>80% ≈ {{ eta80 }}</div>
+                  <div>100% ≈ {{ eta100 }}</div>
+                </div>
               </v-col>
             </v-row>
 
@@ -333,6 +337,30 @@ const updateActiveDuration = () => {
     );
   }
 };
+
+const calcEta = (targetPercent: number): string => {
+  if (!activeSession.value) return '--:--';
+  const startTime = new Date(activeSession.value.start_time || activeSession.value.created_at);
+  const startPct = Number(activeSession.value.start_percentage);
+  const power = Number(activeSession.value.wallbox_power);
+  const capacity = Number(activeSession.value.battery_capacity);
+  const loss = Number(activeSession.value.wallbox_loss);
+
+  if (power <= 0 || capacity <= 0) return '--:--';
+
+  const pctNeeded = targetPercent - startPct;
+  if (pctNeeded <= 0) return 'erreicht';
+
+  const netKwh = (capacity * pctNeeded) / 100;
+  const grossKwh = netKwh * (1 + loss / 100);
+  const hoursNeeded = grossKwh / power;
+  const eta = new Date(startTime.getTime() + hoursNeeded * 3600 * 1000);
+
+  return eta.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+};
+
+const eta80 = computed(() => calcEta(80));
+const eta100 = computed(() => calcEta(100));
 
 const dialogTitle = computed(() => {
   return dialogMode.value === "time"
