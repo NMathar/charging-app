@@ -67,8 +67,8 @@
                 <div class="label-sm text-on-surface-variant mb-2">Dauer</div>
                 <div class="headline-md">{{ activeDuration }}</div>
                 <div class="mt-2" style="font-size: 0.7rem; opacity: 0.6; line-height: 1.5;">
-                  <div>80% ≈ {{ eta80 }}</div>
-                  <div>100% ≈ {{ eta100 }}</div>
+                  <div>80% ≈ {{ eta80 }} Uhr</div>
+                  <div>100% ≈ {{ eta100 }} Uhr</div>
                 </div>
               </v-col>
             </v-row>
