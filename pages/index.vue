@@ -136,7 +136,7 @@
 
         <div v-if="completedSessions.length > 0" class="mb-6">
           <div
-            class="gradient-primary rounded-4xl pa-6 text-white mb-6 shadow-ambient"
+            class="gradient-primary rounded-4xl pa-6 text-white mb-4 shadow-ambient"
           >
             <div class="mb-2">
               <v-icon color="white" size="18">mdi-currency-eur</v-icon>
@@ -144,13 +144,43 @@
             </div>
             <p class="headline-xl">
               {{
-                totalCost.toLocaleString("de-DE", {
+                currentMonthCost.toLocaleString("de-DE", {
                   style: "currency",
                   currency: "EUR",
                 })
               }}
             </p>
-            <p class="body-sm opacity-75 mt-2">Aktueller Monat</p>
+            <p class="body-sm opacity-75 mt-2">{{ currentMonthLabel }}</p>
+          </div>
+
+          <div class="mb-4">
+            <v-btn
+              variant="text"
+              color="primary-container"
+              size="small"
+              class="px-0 mb-2"
+              @click="showMonthHistory = !showMonthHistory"
+            >
+              <v-icon start size="16">{{ showMonthHistory ? 'mdi-chevron-up' : 'mdi-history' }}</v-icon>
+              {{ showMonthHistory ? 'Verlauf ausblenden' : 'Monatsverlauf anzeigen' }}
+            </v-btn>
+
+            <div v-if="showMonthHistory" class="month-scroll-container">
+              <div class="month-scroll-track">
+                <div
+                  v-for="month in monthlyCosts"
+                  :key="month.key"
+                  class="month-card"
+                  :class="{ 'month-card--current': month.isCurrent }"
+                >
+                  <div class="month-card__label">{{ month.label }}</div>
+                  <div class="month-card__cost">
+                    {{ month.cost.toLocaleString("de-DE", { style: "currency", currency: "EUR" }) }}
+                  </div>
+                  <div class="month-card__sessions">{{ month.sessions }} Ladung{{ month.sessions !== 1 ? 'en' : '' }}</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="mb-4">
@@ -267,6 +297,7 @@ const activeDuration = ref("0:00");
 const currentBatteryPercentage = ref(0);
 const stoppingCharge = ref(false);
 const showAllSessions = ref(false);
+const showMonthHistory = ref(false);
 const savingQuick = ref(false);
 const startingQuick = ref(false);
 let durationInterval: NodeJS.Timeout | null = null;
@@ -309,6 +340,48 @@ const totalCost = computed(() => {
     (sum, session) => sum + Number(session.total_cost),
     0,
   );
+});
+
+const currentMonthCost = computed(() => {
+  const now = new Date();
+  return completedSessions.value
+    .filter((s) => {
+      const d = new Date(s.created_at);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    })
+    .reduce((sum, s) => sum + Number(s.total_cost), 0);
+});
+
+const currentMonthLabel = computed(() => {
+  return new Date().toLocaleDateString("de-DE", { month: "long", year: "numeric" });
+});
+
+const monthlyCosts = computed(() => {
+  const map = new Map<string, { cost: number; sessions: number; date: Date }>();
+  for (const s of completedSessions.value) {
+    const d = new Date(s.created_at);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const existing = map.get(key);
+    if (existing) {
+      existing.cost += Number(s.total_cost);
+      existing.sessions += 1;
+    } else {
+      map.set(key, { cost: Number(s.total_cost), sessions: 1, date: d });
+    }
+  }
+
+  const now = new Date();
+  const currentKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
+  return Array.from(map.entries())
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([key, val]) => ({
+      key,
+      label: val.date.toLocaleDateString("de-DE", { month: "short", year: "numeric" }),
+      cost: val.cost,
+      sessions: val.sessions,
+      isCurrent: key === currentKey,
+    }));
 });
 
 const updateActiveDuration = () => {
@@ -595,3 +668,79 @@ onUnmounted(() => {
   }
 });
 </script>
+
+<style scoped>
+.month-scroll-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--v-theme-primary-container), 0.4) transparent;
+  padding-bottom: 8px;
+}
+
+.month-scroll-container::-webkit-scrollbar {
+  height: 4px;
+}
+
+.month-scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.month-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(var(--v-theme-primary-container), 0.4);
+  border-radius: 2px;
+}
+
+.month-scroll-track {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  padding: 4px 2px;
+}
+
+.month-card {
+  flex-shrink: 0;
+  width: 140px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(var(--v-theme-surface-variant), 0.5);
+  border: 1px solid rgba(var(--v-theme-outline), 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.month-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.month-card--current {
+  background: rgba(var(--v-theme-primary-container), 0.15);
+  border-color: rgba(var(--v-theme-primary-container), 0.4);
+}
+
+.month-card__label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+.month-card__cost {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: rgb(var(--v-theme-primary-container));
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.month-card--current .month-card__cost {
+  color: rgb(var(--v-theme-primary));
+}
+
+.month-card__sessions {
+  font-size: 0.72rem;
+  opacity: 0.55;
+}
+</style>
